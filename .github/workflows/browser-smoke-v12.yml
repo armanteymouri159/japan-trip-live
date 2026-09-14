@@ -24,7 +24,7 @@ jobs:
           curl -f http://127.0.0.1:8000/index.html >/dev/null
       - name: Mobile interaction audit
         run: |
-          cat > /tmp/smoke.cjs <<'EOF'
+          cat > smoke.cjs <<'EOF'
           const { chromium } = require('playwright');
           (async()=>{
             const browser=await chromium.launch({headless:true});
@@ -52,29 +52,25 @@ jobs:
               if(areas>0 && await page.locator('#areas .area').count()<1) throw new Error(`Day ${i+1} ${title}: Areas panel failed`);
               await page.locator('.navbtn[data-panel="map"]').click();
               await page.waitForTimeout(180);
-              const mapVisible=await page.locator('#map').isVisible();
-              if(!mapVisible) throw new Error(`Day ${i+1} ${title}: Map panel hidden`);
+              if(!await page.locator('#map').isVisible()) throw new Error(`Day ${i+1} ${title}: Map panel hidden`);
               await page.locator('.navbtn[data-panel="today"]').click();
             }
-            // Spot-check audited content.
-            await page.locator('.daybtn').nth(2).click(); // Sep 24
+            await page.locator('.daybtn').nth(2).click();
             await page.locator('.navbtn[data-panel="areas"]').click();
-            const sep24=(await page.locator('#areas').innerText());
+            const sep24=await page.locator('#areas').innerText();
             if(!/Aso Panorama Line/i.test(sep24)) throw new Error('Sep24 missing Aso Panorama Line');
             if(!/Kokonoe/i.test(sep24)) throw new Error('Sep24 missing Kokonoe decision');
             if(!/CURRENTLY CLOSED/i.test(sep24)) throw new Error('Sep24 missing current crater restriction');
-            await page.locator('.daybtn').nth(5).click(); // Sep27
+            await page.locator('.daybtn').nth(5).click();
             await page.locator('.navbtn[data-panel="areas"]').click();
             const sep27=await page.locator('#areas').innerText();
             if(!/Namba Yasaka/i.test(sep27)||!/Arashiyama/i.test(sep27)||!/Nonomiya/i.test(sep27)) throw new Error('Sep27 missing audited Osaka/Kyoto content');
             if(!/INTENTIONALLY CUT/i.test(sep27)) throw new Error('Sep27 missing explicit cut decisions');
-            // Verify every visible generated Google Maps href is well-formed.
             const hrefs=await page.locator('a[href*="google.com/maps"]').evaluateAll(as=>as.map(a=>a.href));
             for(const h of hrefs){
               if(!/^https:\/\/www\.google\.com\/maps\/(dir|search)\/\?api=1/.test(h)) throw new Error('Bad Google Maps URL: '+h);
               if(/undefined|null/.test(h)) throw new Error('Malformed Google Maps URL: '+h);
             }
-            // Search interaction.
             await page.locator('#searchBtn').click();
             await page.locator('#searchInput').fill('Nonomiya');
             await page.waitForTimeout(100);
@@ -86,4 +82,4 @@ jobs:
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           EOF
-          node /tmp/smoke.cjs
+          node smoke.cjs
