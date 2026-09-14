@@ -1,23 +1,162 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07100e"><title>Japan // Maximum Route</title><meta name="description" content="Live field guide for Japan Sep 22–Oct 5, 2026"><link rel="preconnect" href="https://unpkg.com"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="styles.css"></head><body>
-<header class="top"><a class="logo" href="#"><span class="pulse"></span><strong>JAPAN//MAX</strong><small>SEP 22 → OCT 5</small></a><div class="top-actions"><button id="searchBtn" class="round">⌕</button><div id="clock" class="clock">JST --:--</div></div></header>
-<div id="dayRail" class="day-rail"></div>
-<main><section id="hero" class="hero"><div class="hero-img"></div><div class="shade"></div><div class="hero-content"><div class="kicker" id="heroLabel"></div><h1 id="heroTitle"></h1><p id="heroMission"></p><div class="hero-meta"><span id="heroCity"></span><span id="heroSleep"></span></div><div class="hero-actions"><button id="locate" class="btn primary">◎ FIND US</button><a id="dayRoute" class="btn glass" target="_blank">DAY ROUTE ↗</a></div><div id="photoCredit" class="credit"></div></div></section>
-<section class="wrap live-card"><div class="live-top"><span class="live-dot"></span><span id="liveStatus">LIVE TRIP MODE</span><button id="jumpCurrent" class="micro">AUTO</button></div><div class="live-grid"><div><div class="eyebrow">NOW</div><h2 id="nowName">—</h2><p id="nowDesc"></p></div><div><div class="eyebrow">NEXT</div><h3 id="nextName">—</h3><div class="mini-actions"><a id="nextGo" target="_blank">GO ↗</a><button id="shareStatus">SHARE</button></div></div></div><div class="progress"><i id="progressBar"></i></div></section>
-<nav class="wrap tabs"><button class="tab active" data-panel="timeline">TIMELINE</button><button class="tab" data-panel="map">MAP</button><button class="tab" data-panel="nearby">NEARBY</button><button class="tab" data-panel="trip">FULL TRIP</button><button class="tab" data-panel="essentials">ESSENTIALS</button></nav>
-<section class="wrap panel active" id="timelinePanel"><div class="panel-head"><div><div class="eyebrow">DAY FLOW</div><h2>What happens next</h2></div><div class="panel-tools"><button id="resetDay" class="micro">RESET</button></div></div><div id="timeline"></div></section>
-<section class="wrap panel" id="mapPanel"><div class="panel-head"><div><div class="eyebrow">LIVE ROUTE MAP</div><h2>Everything in context</h2></div><button id="fitMap" class="micro">FIT DAY</button></div><div id="map" class="map"></div><div class="map-key"><span><i class="pin must"></i> Must</span><span><i class="pin high"></i> High</span><span><i class="pin optional"></i> Optional</span></div></section>
-<section class="wrap panel" id="nearbyPanel"><div class="panel-head"><div><div class="eyebrow">LOOK AROUND</div><h2>Good stuff near the current stop</h2></div></div><div id="nearbyHero" class="nearby-hero"></div><div id="nearbyActions" class="nearby-actions"></div><div class="note"><strong>How this works</strong><p>These searches open Google Maps centered on the stop you are already at. That keeps restaurant hours, ratings and openings live instead of freezing stale recommendations into the site.</p></div></section>
-<section class="wrap panel" id="tripPanel"><div class="panel-head"><div><div class="eyebrow">MASTER ROUTE</div><h2>14 days at a glance</h2></div></div><div id="tripGrid" class="trip-grid"></div></section>
-<section class="wrap panel" id="essentialsPanel"><div class="panel-head"><div><div class="eyebrow">TRIP CONTROL</div><h2>Bookings, cut rules, live checks</h2></div></div><div class="essential-grid">
-<div class="essential"><b>TAKACHIHO BOAT</b><h3>Sep 25 · 08:30 target</h3><p>Check operating status the night before and again at dawn. High water can suspend boats.</p><a target="_blank" href="https://takachiho-kanko.info/">OFFICIAL ↗</a></div>
-<div class="essential"><b>ASO / ROADS</b><h3>Recheck 48–72h before Sep 24</h3><p>The itinerary does not depend on crater access. Confirm volcano status and mountain roads.</p><a target="_blank" href="https://www.aso-volcano.jp/eng/">ASO ↗</a><a target="_blank" href="https://www.jma.go.jp/bosai/map.html#contents=volcano">JMA ↗</a></div>
-<div class="essential"><b>FIXED TICKETS</b><h3>teamLab</h3><p>Biovortex Kyoto Sep 29 09:00. Planets Sep 30 10:00. Borderless Oct 2 target 16:30.</p><a target="_blank" href="https://www.teamlab.art/">TEAMLAB ↗</a></div>
-<div class="essential"><b>VIEWPOINT TICKETS</b><h3>Shibuya Sky + Skytree</h3><p>Oct 3 Shibuya Sky ~16:15. Oct 4 Skytree ~16:15. Weather/visibility matter.</p><a target="_blank" href="https://www.shibuya-scramble-square.com/sky/">SHIBUYA SKY ↗</a><a target="_blank" href="https://www.tokyo-skytree.jp/en/">SKYTREE ↗</a></div>
-<div class="essential"><b>NIKKO</b><h3>Oct 1 · early limited express</h3><p>Reserve Tobu seats. Mountain weather first, heritage cluster second.</p><a target="_blank" href="https://www.tobu.co.jp/en/">TOBU ↗</a></div>
-<div class="essential"><b>CUT RULE</b><h3>Cut branches, not anchors</h3><p>When behind, remove an optional branch completely. Never shave the experience out of a must-do just to keep every checkbox.</p></div>
-</div></section>
-</main>
-<div id="drawer" class="drawer"><button id="closeDrawer" class="drawer-close">×</button><div id="drawerImg" class="drawer-img"></div><div class="drawer-body"><div id="drawerType" class="eyebrow"></div><h2 id="drawerName"></h2><p id="drawerDesc"></p><div id="drawerNearby" class="drawer-section"></div><div id="drawerFood" class="drawer-section"></div><div id="drawerButtons" class="drawer-buttons"></div></div></div><div id="backdrop" class="backdrop"></div>
-<div id="searchOverlay" class="search-overlay"><div class="searchbox"><input id="searchInput" placeholder="Search any stop, city, temple, food…"><button id="closeSearch">×</button></div><div id="searchResults"></div></div>
-<div id="toast" class="toast"></div><footer class="sticky"><div><small>NEXT</small><strong id="stickyNext">—</strong></div><a id="stickyGo" target="_blank">GO ↗</a></footer>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="trip-data.js"></script><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f5f5f7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Japan Max">
+  <meta name="description" content="Japan trip field guide · Sep 22 to Oct 5, 2026">
+  <title>Japan Max · Live Trip Guide</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-row">
+      <button id="homeBtn" class="brand" aria-label="Trip home">
+        <span class="brand-mark">J</span>
+        <span><b>Japan Max</b><small>SEP 22 → OCT 5</small></span>
+      </button>
+      <div class="header-actions">
+        <button id="searchBtn" class="icon-btn" aria-label="Search">⌕</button>
+        <div id="clock" class="clock">JST --:--</div>
+      </div>
+    </div>
+    <div id="dayRail" class="day-rail" aria-label="Trip days"></div>
+  </header>
+
+  <main class="page">
+    <section id="hero" class="hero-card">
+      <div class="hero-photo"></div>
+      <div class="hero-gradient"></div>
+      <div class="hero-copy">
+        <span id="heroLabel" class="eyebrow hero-eyebrow"></span>
+        <h1 id="heroTitle"></h1>
+        <p id="heroMission"></p>
+        <div class="hero-meta">
+          <span id="heroCity"></span>
+          <span id="heroSleep"></span>
+        </div>
+        <div class="hero-actions">
+          <button id="locate" class="btn btn-primary">Find us</button>
+          <a id="dayRoute" class="btn btn-light" target="_blank" rel="noopener">Google route ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="live-card card">
+      <div class="live-head">
+        <div class="live-title"><span class="live-dot"></span><span id="liveStatus">Trip mode</span></div>
+        <button id="jumpCurrent" class="text-btn">Use Japan time</button>
+      </div>
+      <div class="live-main">
+        <div class="now-block">
+          <span class="label">NOW</span>
+          <h2 id="nowName">—</h2>
+          <p id="nowDesc"></p>
+        </div>
+        <div class="next-block">
+          <span class="label">NEXT</span>
+          <h3 id="nextName">—</h3>
+          <div class="inline-actions">
+            <a id="nextGo" target="_blank" rel="noopener">Directions</a>
+            <button id="shareStatus">Share</button>
+          </div>
+        </div>
+      </div>
+      <div class="progress"><span id="progressBar"></span></div>
+    </section>
+
+    <nav class="section-tabs" aria-label="Trip sections">
+      <button class="tab active" data-panel="timeline">Timeline</button>
+      <button class="tab" data-panel="map">Map</button>
+      <button class="tab" data-panel="nearby">Nearby</button>
+      <button class="tab" data-panel="trip">Trip</button>
+      <button class="tab" data-panel="essentials">Info</button>
+    </nav>
+
+    <section class="panel active" id="timelinePanel">
+      <div class="section-head">
+        <div><span class="eyebrow">DAY FLOW</span><h2>Today’s route</h2></div>
+        <button id="resetDay" class="text-btn">Reset</button>
+      </div>
+      <div id="timeline" class="timeline"></div>
+    </section>
+
+    <section class="panel" id="mapPanel">
+      <div class="section-head">
+        <div><span class="eyebrow">MAP</span><h2>Route in context</h2></div>
+        <button id="fitMap" class="text-btn">Fit route</button>
+      </div>
+      <div id="mapFallback" class="map-fallback card" hidden>
+        <h3>Map unavailable</h3>
+        <p>The rest of the guide still works. Use the Google route button for live navigation.</p>
+        <a id="mapFallbackRoute" class="btn btn-primary" target="_blank" rel="noopener">Open Google Maps</a>
+      </div>
+      <div id="map" class="map"></div>
+      <div class="map-key"><span><i class="key-dot must"></i>Must</span><span><i class="key-dot high"></i>High</span><span><i class="key-dot flex"></i>Flex</span></div>
+    </section>
+
+    <section class="panel" id="nearbyPanel">
+      <div class="section-head"><div><span class="eyebrow">NEARBY</span><h2>Worthwhile around you</h2></div></div>
+      <div id="nearbyHero" class="nearby-card"></div>
+      <div id="nearbyActions" class="nearby-grid"></div>
+      <div class="tip card"><b>Built for the actual moment</b><p>Nearby buttons use your current itinerary stop as the center point, so Google Maps shows what is open and highly rated when you are actually there.</p></div>
+    </section>
+
+    <section class="panel" id="tripPanel">
+      <div class="section-head"><div><span class="eyebrow">MASTER ROUTE</span><h2>Sep 22 → Oct 5</h2></div></div>
+      <div id="tripGrid" class="trip-grid"></div>
+    </section>
+
+    <section class="panel" id="essentialsPanel">
+      <div class="section-head"><div><span class="eyebrow">TRIP CONTROL</span><h2>Hard gates & live checks</h2></div></div>
+      <div class="info-grid">
+        <article class="info-card dark"><span>TAKACHIHO</span><h3>Boat · Sep 25</h3><p>Check operation the night before and again at dawn. Weather/high water can suspend boats.</p><a target="_blank" rel="noopener" href="https://takachiho-kanko.info/">Official site ↗</a></article>
+        <article class="info-card"><span>KYUSHU</span><h3>Aso + mountain roads</h3><p>Recheck volcano and road status 48–72 hours before Sep 24.</p><a target="_blank" rel="noopener" href="https://www.aso-volcano.jp/eng/">Aso status ↗</a></article>
+        <article class="info-card"><span>BOOKED</span><h3>teamLab</h3><p>Biovortex Sep 29 · 09:00. Planets Sep 30 · 10:00. Borderless Oct 2 target 16:30.</p><a target="_blank" rel="noopener" href="https://www.teamlab.art/">teamLab ↗</a></article>
+        <article class="info-card"><span>SKYLINE</span><h3>Shibuya Sky + Skytree</h3><p>Target ~16:15 for both Oct 3 and Oct 4. Weather and visibility decide how long to stay.</p></article>
+        <article class="info-card"><span>NIKKO</span><h3>Reserve the early Tobu train</h3><p>Mountain first, World Heritage second. Keep the bus buffer.</p><a target="_blank" rel="noopener" href="https://www.tobu.co.jp/en/">Tobu ↗</a></article>
+        <article class="info-card"><span>RULE</span><h3>Cut whole branches</h3><p>If late, remove an optional branch. Do not rush every must-do into becoming a five-minute photo stop.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <div id="drawerBackdrop" class="backdrop"></div>
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <div id="drawerImg" class="drawer-image"></div>
+    <button id="closeDrawer" class="drawer-close" aria-label="Close">×</button>
+    <div class="drawer-content">
+      <span id="drawerType" class="eyebrow"></span>
+      <h2 id="drawerName"></h2>
+      <p id="drawerDesc"></p>
+      <div id="drawerFood" class="drawer-note"></div>
+      <div id="drawerButtons" class="drawer-actions"></div>
+    </div>
+  </aside>
+
+  <div id="searchOverlay" class="search-overlay" aria-hidden="true">
+    <div class="search-shell">
+      <div class="search-bar"><input id="searchInput" inputmode="search" autocomplete="off" placeholder="Search places, cities, temples, food…"><button id="closeSearch">Done</button></div>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <button data-panel="timeline" class="mobile-tab active"><span>◷</span>Timeline</button>
+    <button data-panel="map" class="mobile-tab"><span>⌖</span>Map</button>
+    <button data-panel="nearby" class="mobile-tab"><span>◎</span>Nearby</button>
+    <button data-panel="trip" class="mobile-tab"><span>▦</span>Trip</button>
+    <button data-panel="essentials" class="mobile-tab"><span>•••</span>Info</button>
+  </nav>
+
+  <script src="trip-data.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
