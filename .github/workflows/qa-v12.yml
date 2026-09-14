@@ -1,0 +1,30 @@
+name: v12 syntax QA
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          node --check trip-data.js
+          node --check explore-data.js
+          node --check trip-overrides-v8.js
+          node --check expert-data-v10.js
+          node --check full-trip-expert-v10.js
+          node --check audit-v12.js
+          node --check site-v12.js
+      - name: Check required v12 assets
+        run: |
+          test -f index.html
+          test -f site-v9.css
+          test -f expert-v10.css
+          test -f qa-v12.css
+          grep -q 'audit-v12.js?v=12' index.html
+          grep -q 'site-v12.js?v=12' index.html
