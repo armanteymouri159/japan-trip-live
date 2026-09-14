@@ -1,0 +1,29 @@
+(function(){
+const TD=window.TRIP_DATA&&window.TRIP_DATA.DAYS; if(!TD)return;
+const d=TD.find(x=>x.date==='2026-09-23');
+if(d){
+ d.city='NAGASAKI → FUKUOKA AIRPORT PICKUP → YUFUIN → BEPPU';
+ d.title='Pick up the crew. Chase Yufuin light. Sleep in Beppu.';
+ d.sleep='Beppu · Kannawa / Myoban';
+ d.mission='Leave Nagasaki around 7–8 AM, use the late morning as a light Fukuoka/Hakata buffer, meet the friend at Fukuoka Airport around 2 PM, pick up the car and head straight east. Protect Yufuin daylight, then spend the night in geothermal Beppu.';
+ d.stops=[
+  {time:'07:00',end:'09:15',name:'Nagasaki → Hakata',lat:33.5903,lng:130.4206,priority:'MUST',type:'TRAIN',desc:'Take the chosen 7–8 AM departure from Nagasaki. Exact train can flex; the goal is to be in Hakata with a comfortable buffer before the airport pickup.'},
+  {time:'09:15',end:'12:30',name:'Hakata morning buffer',lat:33.5903,lng:130.4206,priority:'FLEX',type:'NEIGHBORHOOD',desc:'Breakfast, luggage logistics and a compact Hakata-area walk only. Do not burn energy on a distant Fukuoka detour; the road trip begins after the airport pickup.'},
+  {time:'12:30',end:'13:15',name:'Hakata → Fukuoka Airport',lat:33.5859,lng:130.4508,priority:'MUST',type:'MOVE',desc:'Head to the airport early enough that the group is settled before the friend lands.'},
+  {time:'13:15',end:'15:00',name:'Fukuoka Airport · friend pickup + rental',lat:33.5859,lng:130.4508,priority:'MUST',type:'LOGISTICS',desc:'Friend arrival around 2 PM. Meet, restroom, quick food, organize the luggage, collect the rental car and leave as soon as practical.'},
+  {time:'15:00',end:'16:30',name:'Drive Fukuoka Airport → Yufuin',lat:33.2647,lng:131.3690,priority:'MUST',type:'DRIVE',desc:'Go straight east. No Itoshima branch, no Fukuoka overnight and no unnecessary stops — daylight in Yufuin is the priority.'},
+  {time:'16:30',end:'17:00',name:'Kinrin Lake',lat:33.2647,lng:131.3690,priority:'MUST',type:'NATURE',desc:'Park once and walk the lake first while the light is strongest. Mt. Yufu and the calm water are the reason to arrive before sunset.'},
+  {time:'17:00',end:'17:12',name:'Tenso Shrine',lat:33.2642,lng:131.3709,priority:'HIGH',type:'SHRINE',desc:'Tiny lakeside shrine with a water-edge torii. It sits naturally on the Kinrin loop.'},
+  {time:'17:15',end:'17:55',name:'Yunotsubo Kaido',lat:33.2669,lng:131.3651,priority:'HIGH',type:'NEIGHBORHOOD',desc:'Walk the low-rise shopping street back toward the car. Snacks and atmosphere are enough; do not let shopping eat the transfer window.'},
+  {time:'18:20',end:'19:00',name:'Yufuin → Beppu',lat:33.3196,lng:131.4757,priority:'MUST',type:'DRIVE',desc:'Leave Yufuin as twilight fades and continue directly to Beppu.'},
+  {time:'19:15',end:'22:00',name:'Kannawa steam lanes · dinner · onsen',lat:33.3196,lng:131.4757,priority:'MUST',type:'NIGHT',desc:'This is your Beppu night: steam streets, geothermal food and an onsen. Sleep here and start the Yamanami road from Beppu in the morning.',food:'Jigoku-mushi · toriten · onsen dinner'}
+ ];
+}
+if(window.EXPLORE_DATA&&window.EXPLORE_DATA.ZONES){
+ window.EXPLORE_DATA.ZONES['2026-09-23']=[
+  {name:'Hakata morning buffer',time:'09:15–12:30',mode:'walking',img:'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=1400&q=82',summary:'Keep this compact. You are not “doing Fukuoka” today — this is breakfast, luggage and one easy central-Hakata pass before the airport.',extras:[{name:'Kushida Shrine',lat:33.5930,lng:130.4106,type:'bonus',note:'Best cultural add if you want one quick Hakata stop without leaving the core.'},{name:'Canal City Hakata',lat:33.5898,lng:130.4111,type:'bonus',note:'Useful for food, bathrooms and weather cover; do not turn it into a shopping mission.'}],food:[{name:'Hakata ramen near the station',note:'Choose immediate seating; save your schedule for the road trip.',q:'Hakata ramen near Hakata Station Fukuoka'}]},
+  {name:'Airport pickup → Yufuin',time:'12:30–18:20',mode:'driving',img:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1400&q=82',summary:'Meet the friend around 2 PM, collect the car and go directly east. Yufuin is the only sightseeing target before Beppu.',extras:[{name:'Bussanji Temple',lat:33.2631,lng:131.3695,type:'bonus',note:'Quiet thatched-roof temple just south of Kinrin; excellent if the lake loop is moving quickly.'},{name:'Yufuin Floral Village',lat:33.2667,lng:131.3670,type:'bonus',note:'Fun visual stop on Yunotsubo, but always below Kinrin/Tenso in priority.'},{name:'Sagiridai Overlook',lat:33.2679,lng:131.4052,type:'detour',note:'Wide basin view only if you still have daylight and the drive to Beppu remains comfortable.'}],food:[{name:'Milch Yufuin',note:'Fast dessert/snack on the walking street.',q:'Milch Yufuin'},{name:'B-speak',note:'Roll cake if still open and there is no queue.',q:'B-speak Yufuin'}]},
+  {name:'Beppu / Kannawa night',time:'19:15–late',mode:'walking',img:'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=1400&q=82',summary:'One night in Beppu. Lean into what makes it unique: steam streets, geothermal cooking and onsen — not a seven-Hells checklist.',extras:[{name:'Hyotan Onsen',lat:33.3177,lng:131.4798,type:'bonus',note:'Strong public onsen option in Kannawa if you want more than the lodging bath.'},{name:'Yukemuri Observatory',lat:33.3216,lng:131.4834,type:'bonus',note:'Steam-panorama viewpoint; worthwhile only if enough light remains.'}],food:[{name:'Jigoku Mushi Kobo Kannawa',note:'Steam-cook seafood, vegetables and meat using geothermal vents. Perfect fit for the night.',q:'Jigoku Mushi Kobo Kannawa Beppu'},{name:'Toriten nearby',note:'Beppu/Oita chicken tempura if you want a second local specialty.',q:'toriten Kannawa Beppu'}]}
+ ];
+}
+})();
