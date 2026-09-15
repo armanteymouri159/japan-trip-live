@@ -1,0 +1,27 @@
+name: Trip Tool Audit
+on:
+  push:
+    paths:
+      - 'tool/**'
+      - 'canonical.js'
+      - 'v2/data.js'
+      - 'final/enrich.js'
+      - '.github/workflows/tool-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check v2/data.js
+      - run: node --check canonical.js
+      - run: node --check final/enrich.js
+      - run: node --check tool/details.js
+      - run: node --check tool/app2.js
+      - run: npm install --no-save jsdom@25
+      - run: node tool/smoke.mjs
