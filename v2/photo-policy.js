@@ -37,5 +37,16 @@ const aliases={
  'senso ji at dawn':['senso ji']
 };
 function plausible(label,wiki){if(!wiki)return false;const a=n(label),b=n(wiki);if(aliases[a])return aliases[a].some(x=>b.includes(n(x)));const A=a.split(' ').filter(x=>x.length>=4),B=new Set(b.split(' ').filter(x=>x.length>=4));return A.some(x=>B.has(x));}
-T.days.forEach(d=>d.zones.forEach(z=>z.stops.forEach(s=>{if(s[7]&&!plausible(s[1],s[7]))s[7]=null;})));
+const usedZoneTitles=new Set();
+T.days.forEach(d=>d.zones.forEach(z=>{
+ if(z.image){const zi=n(z.image);if(usedZoneTitles.has(zi))z.image=null;else usedZoneTitles.add(zi)}
+ const usedStopTitles=new Set();
+ z.stops.forEach(s=>{
+   if(!s[7])return;
+   if(!plausible(s[1],s[7])){s[7]=null;return}
+   const wi=n(s[7]);
+   if(usedStopTitles.has(wi)&&!n(s[1]).includes(wi)){s[7]=null;return}
+   usedStopTitles.add(wi);
+ });
+}));
 })();
