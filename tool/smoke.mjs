@@ -52,7 +52,11 @@ const tripTab=$$('.tab').find(x=>x.dataset.view==='trip');tripTab.click();await 
 $('#searchBtn').click();$('#searchInput').value='Kinkaku';$('#searchInput').dispatchEvent(new w.Event('input',{bubbles:true}));await tick();assert($('#searchResults').textContent.includes('Kinkaku-ji'),'Search failed to find Kinkaku');
 
 // Audit corrected Takachiho day in data, independent of current selected view.
-const d25=w.JAPAN_TRIP.days.find(x=>x.date==='2026-09-25');assert(d25,'Sep 25 missing');const d25text=JSON.stringify(d25).toLowerCase();assert(!d25text.includes('rowboat'),'Sep 25 still contains rowboat');assert(d25text.includes('manai falls'),'Sep 25 Manai Falls missing');assert(d25text.includes('kushifuru'),'Sep 25 Kushifuru missing');
+const d25=w.JAPAN_TRIP.days.find(x=>x.date==='2026-09-25');assert(d25,'Sep 25 missing');
+const d25Stops=d25.zones.flatMap(z=>z.stops).map(s=>`${s[1]} ${s[8]||''}`).join(' ').toLowerCase();
+assert(!/rowboat|boat reception/.test(d25Stops),'Sep 25 still schedules a rowboat/boat reception');
+assert(d25Stops.includes('manai falls'),'Sep 25 Manai Falls missing');
+assert(d25Stops.includes('kushifuru'),'Sep 25 Kushifuru missing');
 
 if(errors.length)throw errors[0];
 console.log('PASS: Japan trip tool smoke audit');
