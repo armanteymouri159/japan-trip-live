@@ -22,6 +22,7 @@ jobs:
       - run: node --check canonical.js
       - run: node --check final/enrich.js
       - run: node --check tool/details.js
+      - run: node --check tool/map-ui-fix.js
       - run: node --check tool/app2.js
       - run: npm install --no-save jsdom@25
       - run: node tool/smoke.mjs
