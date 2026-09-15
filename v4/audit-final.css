@@ -1,0 +1,32 @@
+/* Final field-guide usability audit */
+:root{--fieldbar-h:58px}
+.visual{background:linear-gradient(135deg,#17324e 0%,#102134 52%,#12362f 100%)}
+.visual-fallback{z-index:0!important;opacity:1!important;visibility:visible!important;background:linear-gradient(135deg,#17324e,#102134 58%,#12362f)!important}
+.dayhero .visual-fallback span,.dayhero .visual-fallback b,.zoneVisual .visual-fallback span,.zoneVisual .visual-fallback b{display:block!important}
+.visual-img.loaded~.visual-fallback{opacity:0!important;transition:opacity .18s ease}
+.visual.failed .visual-fallback,.visual:not(:has(.visual-img.loaded)) .visual-fallback{opacity:1!important}
+.visual.failed .visual-img{display:none!important}
+.dayhero.visual.failed,.zoneVisual.visual.failed,.focusVisual.visual.failed,.sheetVisual.visual.failed,.tripPhoto.visual.failed{background:linear-gradient(135deg,#17324e,#102134 58%,#12362f)!important}
+.dayhero .visual-fallback{padding:18px 16px 20px!important}.dayhero .visual-fallback span{font-size:9px!important;letter-spacing:.12em!important}.dayhero .visual-fallback b{font-size:clamp(25px,7vw,42px)!important;max-width:720px!important}
+.zoneVisual .visual-fallback{padding:15px!important}.zoneVisual .visual-fallback span{font-size:8px!important}.zoneVisual .visual-fallback b{font-size:22px!important}
+.heroCopy{max-width:760px}.heroCopy p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#todayView .page{display:flex;flex-direction:column}
+#todayView .dayStatus{order:1}#todayView .focusCard{order:2}#todayView .alertsBox{order:3}#todayView .upNext{order:4}#todayView .areasQuick{order:5}
+.alertsBox{margin-top:10px}.alertsBox:not([open]) summary{padding:10px 12px}.alertsBox:not([open]) summary b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quickFacts button,.quickFacts a,.mainActions a,.mainActions button,.stepper button,.miniGo,.areaQuick,.nextRow,.navBtn,.daychip{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.focusBody p{font-size:13px;line-height:1.5}.stopCopy p{font-size:11px;line-height:1.42}.zoneIntro p{font-size:12px;line-height:1.45}.nextRow b,.areaQuick b{font-size:14px}
+.fieldBar{position:fixed;left:50%;bottom:calc(72px + var(--safe));transform:translateX(-50%);z-index:68;width:min(94%,520px);display:none;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 9px 8px 12px;border:1px solid rgba(20,24,30,.1);border-radius:17px;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);box-shadow:0 8px 30px rgba(18,20,25,.16)}
+.fieldBar.show{display:grid}.fieldBarText{min-width:0}.fieldBarText small{display:block;color:#6f7781;font-size:8px;font-weight:900;letter-spacing:.08em}.fieldBarText b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;margin-top:2px}.fieldBar a{min-height:40px;padding:0 13px;border-radius:11px;background:#111;color:#fff;text-decoration:none;display:flex;align-items:center;font-size:9px;font-weight:900}
+#imageHealth{display:none}
+@media(max-width:720px){
+ .dayhero{height:205px!important;min-height:205px!important}.heroCopy{bottom:15px;left:13px;right:13px}.heroCopy h1{font-size:31px!important;margin-bottom:5px}.heroCopy p{font-size:11px;line-height:1.38;-webkit-line-clamp:2}.heroEyebrow{font-size:8px;margin-bottom:5px}
+ .dayStatus{margin-top:-8px;padding:12px}.quickFacts{gap:6px}.quickFacts button,.quickFacts a{min-height:42px;font-size:9px}
+ .focusCard{margin-top:9px;border-radius:19px}.focusTop{padding:10px 11px}.focusVisual{height:150px!important}.focusVisual.visual.failed{height:118px!important}.focusBody{padding:13px}.focusBody h2{font-size:25px}.focusBody p{font-size:12.5px}.mainActions{margin-top:11px}.mainActions a,.mainActions button{min-height:46px}.stepper button{min-height:42px}
+ .sectionHead{margin-top:15px}.nextRow,.areaQuick{padding:11px 12px}
+ .pageTitle h1{font-size:29px}.zoneBlock{margin-top:13px;border-radius:18px}.zoneVisual{height:145px!important}.zoneVisual.visual.failed{height:112px!important}.zoneOverlay h2{font-size:21px}.zoneIntro{padding:11px 12px;display:block}.zoneIntro a{display:inline-block;margin-top:8px;padding:8px 0}.stopRow{grid-template-columns:30px 52px 1fr auto;gap:6px;padding:11px 9px}.stopCopy p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.miniGo{padding:7px 4px}
+ .tripCard{grid-template-columns:92px 1fr 20px}.tripPhoto{height:110px}.tripText h2{font-size:15px}.tripText p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ .sheetVisual{height:190px!important}.sheetVisual.visual.failed{height:130px!important}.sheetCopy h2{font-size:26px}
+ .bottomNav{bottom:calc(7px + var(--safe));width:96%}.navBtn{min-height:50px}.fieldBar{bottom:calc(68px + var(--safe));width:96%}
+}
+@media(max-width:390px){.dayhero{height:190px!important;min-height:190px!important}.heroCopy h1{font-size:28px!important}.focusVisual{height:135px!important}.quickFacts{grid-template-columns:1fr 1fr}.quickFacts>*:last-child{grid-column:1/-1}.stopRow{grid-template-columns:28px 47px 1fr}.miniGo{grid-column:3;justify-self:start;padding:4px 0}.tripText p{display:none}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
