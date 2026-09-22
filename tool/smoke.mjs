@@ -19,8 +19,19 @@ w.cancelAnimationFrame=()=>{};
 w.HTMLElement.prototype.scrollIntoView=function(){};
 w.scrollTo=()=>{};
 w.Image=class{set src(v){queueMicrotask(()=>this.onerror?.())}};
+const markerHandlers=[];let mapInstance=null;
+w.navigator.geolocation={getCurrentPosition(ok){ok({coords:{latitude:32.7503,longitude:129.8779,accuracy:20}})}};
+w.L={
+  map:()=>mapInstance={remove(){},fitBounds(){},setView(){return this},getZoom(){return 13},on(){return this}},
+  tileLayer:()=>({addTo(){return this}}),
+  divIcon:x=>x,
+  marker:(p)=>{const m={_p:p,addTo(){return this},bindTooltip(){return this},on(ev,fn){if(ev==='click')markerHandlers.push(fn);return this},getLatLng(){return p}};return m},
+  polyline:()=>({addTo(){return this}}),
+  latLngBounds:x=>({points:x}),
+  circleMarker:()=>({addTo(){return this},bindTooltip(){return this},remove(){}})
+};
 
-for(const file of ['v2/data.js','canonical.js','tool/expansion.js','final/enrich.js','tool/details.js','tool/app2.js','tool/transport-ui.js']){
+for(const file of ['v2/data.js','canonical.js','tool/expansion.js','final/enrich.js','tool/details.js','tool/map-ui-fix.js','tool/app2.js','tool/transport-ui.js']){
   w.eval(fs.readFileSync(file,'utf8'));
 }
 const $=s=>w.document.querySelector(s), $$=s=>[...w.document.querySelectorAll(s)];
@@ -57,7 +68,12 @@ const nikko=names('2026-10-01');for(const x of ['Kegon Falls','Lake Chuzenji sho
 const kama=names('2026-10-02');for(const x of ['Tsurugaoka Hachimangu','Hasedera','Kotoku-in · Great Buddha','Yuigahama Beach','Inamuragasaki'])assert(kama.includes(x),`Kamakura missing ${x}`);
 const tokyo=names('2026-10-04');for(const x of ['Senso-ji','Asakusa Shrine','Kappabashi Dougu Street','Ueno Toshogu','Yanaka Ginza','Nezu Shrine','Tokyo Skytree observation','Akihabara Electric Town'])assert(tokyo.includes(x),`Tokyo old-city day missing ${x}`);
 
-const mapTab=$$('.tab').find(x=>x.dataset.view==='map');mapTab.click();await tick();assert($('#mapView').classList.contains('active'),'Map tab failed');assert($('#leafletMap'),'Map container missing');
+const mapTab=$('.tab').find(x=>x.dataset.view==='map');mapTab.click();await tick();assert($('#mapView').classList.contains('active'),'Map tab failed');assert($('#leafletMap'),'Map container missing');
+assert($('#mapOverview'),'Overview button missing');assert($('#mapLocate'),'Current location button missing');assert($('#mapItinerary'),'Itinerary return button missing');assert($('#mapPeek')?.hidden===true,'Map stop card should start minimized');
+assert(markerHandlers.length>1,'Map markers were not wired for click interactions');markerHandlers[0]();await tick();assert($('#mapPeek')?.hidden===false,'Clicking a pin should open compact stop card');assert($('#mapPeek').textContent.length>0,'Map stop card should contain stop info');$('#mapPeekClose').click();assert($('#mapPeek')?.hidden===true,'Map stop card should minimize');
+markerHandlers[1]();await tick();assert($('#mapPeek')?.hidden===false,'A second pin should open after minimizing the first');$('#mapPeekClose').click();
+$('#mapLocate').click();await tick();assert($('#mapLocate').textContent.includes('Current location'),'Current location control failed');
+assert(!$('#sheetBody .leaflet-container'),'Stop detail sheet must never contain an embedded map');
 const tripTab=$$('.tab').find(x=>x.dataset.view==='trip');tripTab.click();await tick();assert($$('.daycard').length===14,'Trip view should have 14 day cards');
 
 $('#searchBtn').click();$('#searchInput').value='Nezu Shrine';$('#searchInput').dispatchEvent(new w.Event('input',{bubbles:true}));await tick();assert($('#searchResults').textContent.includes('Nezu Shrine'),'Search failed to find newly expanded Tokyo stop');
