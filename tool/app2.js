@@ -4,7 +4,7 @@ const T=window.JAPAN_TRIP,E=window.JAPAN_ENRICH||{placeInfo:{},typeTips:{}};if(!
 const $=(s,r=document)=>{if(typeof r==='string')r=document.querySelector(r);return(r||document).querySelector(s)};
 const $$=(s,r=document)=>{if(typeof r==='string')r=document.querySelector(r);return[...(r||document).querySelectorAll(s)]};
 const DONE='japan-tool80-done',PREF='japan-tool80-pref',PHOTOS='japan-tool80-photos';
-const state={day:0,view:'today',stop:0,overlay:null};let map=null;
+const state={day:0,view:'today',stop:0,overlay:null};let map=null,userMarker=null,userLocation=null,mapBounds=null;
 const HERO={'2026-09-22':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Nagasaki%20City%20view%20from%20Mt%20Inasa04s.jpg?width=1800','2026-09-23':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Sakurai%20Futamigaura.jpg?width=1800','2026-09-24':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Kusasenri01.jpg?width=1800','2026-09-25':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Manai%20Falls%20at%20Takachiho%20Gorge.jpg?width=1800','2026-09-26':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Himeji%20castle%20in%20may%202015.jpg?width=1800','2026-09-27':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Bamboo%20Grove%2C%20Arashiyama%2C%20Kyoto%2C%20Japan.jpg?width=1800','2026-09-28':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Kiyomizu-dera%2C%20Kyoto%2C%20November%202016%20-01.jpg?width=1800','2026-09-29':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Fushimi%20Inari%20Shrine%20%40%20Kyoto%20%2813406174775%29.jpg?width=1800','2026-09-30':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Rainbow%20Bridge%2C%20Odaiba%2C%20Tokyo.jpg?width=1800','2026-10-01':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Kegon%20Falls%2C%20Nikko%20National%20Park%2C%20Japan.jpg?width=1800','2026-10-02':'https://commons.wikimedia.org/wiki/Special:Redirect/file/JP-kamakura-daibutsu-2.jpg?width=1800','2026-10-03':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Shibuya%20Crossing.jpg?width=1800','2026-10-04':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Asakusa%20Sensoji.jpg?width=1800','2026-10-05':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Tokyo-STA%20Marunouchi-Entrance%202023.jpg?width=1800'};
 const NO_PHOTO=new Set(['MOVE','TRAIN','DRIVE','LOGISTICS','HOME','BUFFER','ARRIVAL']);
 const OFFICIAL=[['JR Kyushu','https://www.jrkyushu.co.jp/english/'],['Itoshima / Fukuoka tourism','https://www.crossroadfukuoka.jp/en/'],['Takachiho Tourism','https://takachiho-kanko.info/'],['JMA Aso status','https://www.data.jma.go.jp/vois/data/report/activity_info/503.html'],['Aso crater access','https://www.aso-volcano.jp/'],['Himeji Castle','https://www.himejicastle.jp/en/'],['teamLab','https://www.teamlab.art/'],['Tobu Nikko','https://www.tobu.co.jp/en/'],['Shibuya Sky','https://www.shibuya-scramble-square.com/sky/'],['Tokyo Skytree','https://www.tokyo-skytree.jp/en/']];
@@ -28,8 +28,73 @@ function alerts(x){return x.alerts?.length?`<div class="alerts">${x.alerts.map(a
 function stopRow(s){return`<button class="stoprow ${pclass(s.priority)} ${isDone(s)?'done':''}" data-stop="${s.gi}"><span class="stime">${esc(s.time)}</span><span class="stoptext"><b>${esc(s.name)}</b><span>${esc(s.priority)} · ${esc(s.type)}</span></span><span class="chev">›</span></button>`}
 function areaHtml(z,zi,offset){const arr=z.stops.map((a,si)=>obj(a,zi,si,offset+si,z));return`<details class="area" ${zi===0?'open':''}><summary><div><small>AREA ${zi+1} · ${esc(z.time)}</small><h3>${esc(z.name)}</h3><p>${esc(z.summary)}</p></div><div class="areaCount">${arr.length}<br>stops</div></summary><div class="areaBody"><div class="areaRoute"><a href="${routeUrl(z)}" target="_blank" rel="noopener">Open route ↗</a><button data-start="${offset}">Start here</button></div><div class="timeline">${arr.map(stopRow).join('')}</div>${z.food?.length?`<div class="foodline">${z.food.map(f=>`<a href="${maps(f[1]||f[0])}" target="_blank"><b>${esc(f[0])}</b><span>${esc(f[2]||'')}</span></a>`).join('')}</div>`:''}${z.cut?`<div class="cut"><b>If behind:</b> ${esc(z.cut)}</div>`:''}</div></details>`}
 function renderToday(){const x=day(),p=progress(x),l=lodging(x);let off=0;$('#todayView').innerHTML=`<section class="hero" style="background-image:url('${hero(x)}')"><div class="heroCopy"><div class="kicker">DAY ${state.day+1} · ${esc(x.label)}</div><h1>${esc(x.city)}</h1><p>${esc(x.mission)}</p><div class="heroActions"><button id="startDay">Start day</button><button class="secondary" id="heroMap">Map route</button></div></div></section><div class="wrap"><section class="summary"><div class="summaryTop"><div><b>${p.total} stops · ${x.zones.length} areas</b><small>${esc(l?.name||'Departure day')}</small></div><div class="pct">${p.pct}%</div></div><div class="track"><i style="width:${p.pct}%"></i></div><div class="summaryBtns"><button id="briefBtn">Day brief</button><button id="routeBtn">Full map</button>${l?'<button id="sleepBtn">Sleep</button>':'<button id="tripBtn">Trip</button>'}</div></section>${alerts(x)}<div class="sectionTitle"><div><small>FULL DAY FLOW</small><h2>Route</h2></div><span>Tap any stop</span></div>${x.zones.map((z,zi)=>{const h=areaHtml(z,zi,off);off+=z.stops.length;return h}).join('')}</div>`;$('#startDay').onclick=()=>go({view:'live',stop:Math.min(state.stop,allStops().length-1),overlay:null},true);$('#heroMap').onclick=$('#routeBtn').onclick=()=>go({view:'map',overlay:null},true);$('#briefBtn').onclick=()=>openOverlay({type:'brief'});if(l)$('#sleepBtn').onclick=()=>window.open(maps(l.address),'_blank');else $('#tripBtn').onclick=()=>go({view:'trip'},true);$$('[data-stop]','#todayView').forEach(b=>b.onclick=()=>openOverlay({type:'stop',index:+b.dataset.stop}));$$('[data-start]','#todayView').forEach(b=>b.onclick=()=>go({view:'live',stop:+b.dataset.start,overlay:null},true))}
-function renderMap(){const x=day();$('#mapView').innerHTML=`<div class="mapPage"><section class="mapCard"><div class="mapHeader"><small>${esc(x.label)} · ROUTE MAP</small><h1>${esc(x.city)}</h1><p>Numbered pins show visit order. The line shows sequence, not street routing. Use the area links for actual directions.</p></div><div id="leafletMap" class="mapBox"></div><div class="mapRoutes">${x.zones.map(z=>`<a href="${routeUrl(z)}" target="_blank">${esc(z.name)} ↗</a>`).join('')}</div></section></div>`;if(state.view==='map')requestAnimationFrame(initMap)}
-function initMap(){if(map){map.remove();map=null}const el=$('#leafletMap');if(!el)return;if(!window.L){el.innerHTML='<div style="padding:24px;font-size:11px;color:#777">Interactive map could not load. Use the route links below.</div>';return}const pts=allStops().filter(s=>Number.isFinite(+s.lat)&&Number.isFinite(+s.lng));if(!pts.length)return;map=L.map(el,{zoomControl:true});L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);const ll=[];pts.forEach(s=>{const p=[+s.lat,+s.lng];ll.push(p);const icon=L.divIcon({className:'',html:`<div class="pinIcon">${s.gi+1}</div>`,iconSize:[28,28],iconAnchor:[14,14]}),m=L.marker(p,{icon}).addTo(map);m.bindTooltip(`${s.time} · ${s.name}`,{direction:'top'});m.on('click',()=>openOverlay({type:'stop',index:s.gi}))});L.polyline(ll,{color:'#111',weight:3,opacity:.45,dashArray:'5,7'}).addTo(map);map.fitBounds(L.latLngBounds(ll),{padding:[28,28]})}
+function renderMap(){
+  cleanupMap();
+  const x=day();
+  $('#mapView').innerHTML=`<div class="mapPage"><section class="mapCard"><div class="mapHeader"><small>${esc(x.label)} · ROUTE MAP</small><h1>${esc(x.city)}</h1><p>Tap a numbered pin for a small stop card. The map never opens inside the stop details. Use Overview anytime to reset the whole day.</p><div class="mapControls"><button id="mapItinerary">← Itinerary</button><button id="mapOverview">Overview</button><button id="mapLocate">◎ Current location</button></div></div><div class="mapStage"><div id="leafletMap" class="mapBox"></div><div id="mapPeek" class="mapPeek" hidden></div></div><div class="mapRoutes">${x.zones.map(z=>`<a href="${routeUrl(z)}" target="_blank">${esc(z.name)} ↗</a>`).join('')}</div></section></div>`;
+  $('#mapItinerary').onclick=()=>go({view:'today',overlay:null},true);
+  $('#mapOverview').onclick=()=>resetMapOverview();
+  $('#mapLocate').onclick=()=>locateCurrent(true);
+  if(state.view==='map')requestAnimationFrame(initMap);
+}
+function cleanupMap(){
+  if(map){try{map.remove()}catch{}}
+  map=null;userMarker=null;mapBounds=null;
+}
+function showMapStop(s,marker){
+  const peek=$('#mapPeek');if(!peek)return;
+  peek.hidden=false;
+  peek.innerHTML=`<div class="mapPeekTop"><div><small>${esc(s.time)} · ${esc(s.priority)} · ${esc(s.type)}</small><b>${esc(s.name)}</b></div><button id="mapPeekClose" aria-label="Minimize stop card">⌄</button></div><p>${esc(s.desc)}</p><div class="mapPeekActions"><button id="mapPeekDetails">Details</button><a href="${directions(s)}" target="_blank" rel="noopener">Directions ↗</a></div>`;
+  $('#mapPeekClose').onclick=()=>{peek.hidden=true;resetMapOverview(false)};
+  $('#mapPeekDetails').onclick=()=>openOverlay({type:'stop',index:s.gi});
+  if(map&&marker){const ll=marker.getLatLng?marker.getLatLng():[+s.lat,+s.lng];map.setView(ll,Math.max(map.getZoom?.()||13,15),{animate:true})}
+}
+function resetMapOverview(hidePeek=true){
+  if(hidePeek){const p=$('#mapPeek');if(p)p.hidden=true}
+  if(map&&mapBounds){try{map.fitBounds(mapBounds,{padding:[32,32]})}catch{}}
+}
+function drawUserLocation(){
+  if(!map||!userLocation||!window.L)return;
+  if(userMarker){try{userMarker.remove()}catch{}}
+  userMarker=L.circleMarker([userLocation.lat,userLocation.lng],{radius:8,color:'#fff',weight:3,fillColor:'#0a66ff',fillOpacity:1}).addTo(map);
+  userMarker.bindTooltip('You are here',{direction:'top'});
+}
+function locateCurrent(center=true){
+  const btn=$('#mapLocate');
+  if(!navigator.geolocation){toast('Current location is not available in this browser');return}
+  if(btn)btn.textContent='Locating…';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy};
+    drawUserLocation();
+    if(center&&map)map.setView([userLocation.lat,userLocation.lng],16,{animate:true});
+    if(btn)btn.textContent='● Current location';
+    toast('Current location added');
+  },err=>{
+    if(btn)btn.textContent='◎ Current location';
+    toast(err?.code===1?'Location permission was not allowed':'Could not get current location');
+  },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
+}
+function initMap(){
+  cleanupMap();
+  const el=$('#leafletMap');if(!el)return;
+  if(!window.L){el.innerHTML='<div style="padding:24px;font-size:11px;color:#777">Interactive map could not load. Use the route links below.</div>';return}
+  const pts=allStops().filter(s=>s.lat!==null&&s.lat!==undefined&&s.lat!==''&&s.lng!==null&&s.lng!==undefined&&s.lng!==''&&Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lng)));
+  if(!pts.length)return;
+  map=L.map(el,{zoomControl:true});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+  const ll=[];
+  pts.forEach(s=>{
+    const p=[Number(s.lat),Number(s.lng)];ll.push(p);
+    const icon=L.divIcon({className:'',html:`<div class="pinIcon">${s.gi+1}</div>`,iconSize:[28,28],iconAnchor:[14,14]});
+    const m=L.marker(p,{icon}).addTo(map);
+    m.bindTooltip(`${s.time} · ${s.name}`,{direction:'top'});
+    m.on('click',()=>showMapStop(s,m));
+  });
+  L.polyline(ll,{color:'#111',weight:3,opacity:.45,dashArray:'5,7'}).addTo(map);
+  mapBounds=L.latLngBounds(ll);
+  resetMapOverview(false);
+  drawUserLocation();
+}
 function renderTrip(){$('#tripView').innerHTML=`<div class="tripPage"><div class="pageHead"><h1>Japan</h1><p>One tool for the full Sep 22 → Oct 5 trip. Tap a day to open its route.</p></div><div class="daycards">${T.days.map((x,i)=>{const p=progress(x);return`<button class="daycard" data-day="${i}"><span class="dayphoto" style="background-image:url('${hero(x)}')"></span><span class="daycopy"><small>${esc(x.label)} · ${p.n}/${p.total} done</small><b>${esc(x.city)}</b><span>${esc(x.mission)}</span></span></button>`}).join('')}</div></div>`;$$('[data-day]','#tripView').forEach(b=>b.onclick=()=>go({day:+b.dataset.day,view:'today',stop:0,overlay:null},true))}
 function renderMore(){const lodges=Object.values(T.lodgings||{});$('#moreView').innerHTML=`<div class="morePage"><div class="pageHead"><h1>Trip essentials</h1><p>Only the things you need when logistics matter.</p></div><section class="moreGroup"><h2>Bookings & hard gates</h2>${BOOKINGS.map(x=>`<div class="moreItem"><b>${esc(x[0])} · ${esc(x[1])}</b><p>${esc(x[2])}</p></div>`).join('')}</section><section class="moreGroup"><h2>Sleep</h2>${lodges.map(x=>`<div class="moreItem"><b>${esc(x.name)}</b><p>${esc(x.address)}</p><a href="${maps(x.address)}" target="_blank">Open map ↗</a></div>`).join('')}</section><section class="moreGroup"><h2>Field rules</h2><div class="moreItem"><b>Kyushu driving</b><p>Drive left. Every driver needs the proper license/IDP/passport setup. Use ETC, return full, and assume mountain roads take longer than app estimates. Stop only at legal pullouts.</p></div><div class="moreItem"><b>Luggage</b><p>Road-trip Kyushu with small bags if possible. On Sep 29 leave main luggage at the Kyoto Airbnb during teamLab, then collect once before Kyoto Station.</p></div><div class="moreItem"><b>Cut system</b><p>Cut shopping, long meals, repeated viewpoints and optional interiors first. Never cut bookings, the primary anchor, safe transport buffers or the sleep destination.</p></div><div class="moreItem"><b>Emergency</b><p>Police 110 · ambulance/fire 119. For a rental-car accident: stop safely, handle injuries, call police even for a minor collision, then the rental company.</p></div></section><section class="moreGroup"><h2>Live checks</h2>${OFFICIAL.map(x=>`<div class="moreItem"><b>${esc(x[0])}</b><a href="${x[1]}" target="_blank" rel="noopener">Official site ↗</a></div>`).join('')}</section></div>`}
 function renderLive(){const x=day(),ss=allStops(),s=ss[Math.min(state.stop,ss.length-1)],next=ss[state.stop+1],p=progress(x);if(!s){$('#liveView').innerHTML='';return}$('#liveView').innerHTML=`<div class="livePage"><div class="liveTop"><button id="liveBack">‹ Back to route</button><span>${esc(x.label)} · ${p.pct}% done</span></div><article class="liveCard"><div class="livePhoto noPhoto" id="livePhoto"></div><div class="liveBody"><div class="liveMeta"><span>${esc(s.time)} · ${esc(s.priority)}</span><span>${state.stop+1}/${ss.length}</span></div><h1>${esc(s.name)}</h1><p>${esc(s.desc)}</p><div class="liveActions"><a href="${directions(s)}" target="_blank">GO NOW ↗</a><button id="doneNext">${isDone(s)?'Next':'Done + next'}</button></div><div class="liveStep"><button id="prevStop" ${state.stop===0?'disabled':''}>← Previous</button><button id="detailStop">Details</button><button id="nextStop" ${state.stop>=ss.length-1?'disabled':''}>Next →</button></div></div></article>${next?`<div class="nextUp"><small>UP NEXT · ${esc(next.time)}</small><b>${esc(next.name)}</b><p>${esc(next.desc)}</p></div>`:''}</div>`;loadPhoto($('#livePhoto'),s);$('#liveBack').onclick=()=>go({view:'today',overlay:null},false);$('#prevStop').onclick=()=>swap({stop:Math.max(0,state.stop-1)},false);$('#nextStop').onclick=()=>swap({stop:Math.min(ss.length-1,state.stop+1)},false);$('#detailStop').onclick=()=>openOverlay({type:'stop',index:state.stop});$('#doneNext').onclick=()=>{if(!isDone(s))setDone(s,true);swap({stop:Math.min(ss.length-1,state.stop+1)},false);toast('Updated')}}
