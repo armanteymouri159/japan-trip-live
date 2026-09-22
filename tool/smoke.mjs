@@ -69,7 +69,7 @@ const nikko=names('2026-10-01');for(const x of ['Kegon Falls','Lake Chuzenji sho
 const kama=names('2026-10-02');for(const x of ['Tsurugaoka Hachimangu','Hasedera','Kotoku-in · Great Buddha','Yuigahama Beach','Inamuragasaki'])assert(kama.includes(x),`Kamakura missing ${x}`);
 const tokyo=names('2026-10-04');for(const x of ['Senso-ji','Asakusa Shrine','Kappabashi Dougu Street','Ueno Toshogu','Yanaka Ginza','Nezu Shrine','Tokyo Skytree observation','Akihabara Electric Town'])assert(tokyo.includes(x),`Tokyo old-city day missing ${x}`);
 
-const mapTab=$('.tab').find(x=>x.dataset.view==='map');mapTab.click();await tick();assert($('#mapView').classList.contains('active'),'Map tab failed');assert($('#leafletMap'),'Map container missing');
+const mapTab=$$('.tab').find(x=>x.dataset.view==='map');mapTab.click();await tick();assert($('#mapView').classList.contains('active'),'Map tab failed');assert($('#leafletMap'),'Map container missing');
 assert($('#mapOverview'),'Overview button missing');assert($('#mapLocate'),'Current location button missing');assert($('#mapItinerary'),'Itinerary return button missing');assert($('#mapPeek')?.hidden===true,'Map stop card should start minimized');
 assert(markerHandlers.length>1,'Map markers were not wired for click interactions');markerHandlers[0]();await tick();assert($('#mapPeek')?.hidden===false,'Clicking a pin should open compact stop card');assert($('#mapPeek').textContent.length>0,'Map stop card should contain stop info');$('#mapPeekClose').click();assert($('#mapPeek')?.hidden===true,'Map stop card should minimize');
 markerHandlers[1]();await tick();assert($('#mapPeek')?.hidden===false,'A second pin should open after minimizing the first');$('#mapPeekClose').click();
