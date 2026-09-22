@@ -34,7 +34,8 @@ w.L={
 for(const file of ['v2/data.js','canonical.js','tool/expansion.js','final/enrich.js','tool/details.js','tool/map-ui-fix.js','tool/app2.js','tool/transport-ui.js']){
   w.eval(fs.readFileSync(file,'utf8'));
 }
-const $=s=>w.document.querySelector(s), $$=s=>[...w.document.querySelectorAll(s)];
+w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
+const $=s=>w.document.querySelector(s), $=s=>[...w.document.querySelectorAll(s)];
 const assert=(cond,msg)=>{if(!cond)throw new Error(msg)};
 const tick=()=>new Promise(r=>setTimeout(r,0));
 await tick();
