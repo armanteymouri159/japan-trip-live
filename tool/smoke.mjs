@@ -35,7 +35,7 @@ for(const file of ['v2/data.js','canonical.js','tool/expansion.js','final/enrich
   w.eval(fs.readFileSync(file,'utf8'));
 }
 w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
-const $=s=>w.document.querySelector(s), $=s=>[...w.document.querySelectorAll(s)];
+const $=s=>w.document.querySelector(s), $$=s=>[...w.document.querySelectorAll(s)];
 const assert=(cond,msg)=>{if(!cond)throw new Error(msg)};
 const tick=()=>new Promise(r=>setTimeout(r,0));
 await tick();
