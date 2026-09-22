@@ -42,8 +42,8 @@ await tick();
 
 assert($('#dayRail').children.length===14,'day rail should contain 14 days');
 assert($('#todayView').textContent.includes('Nagasaki'),'initial day should render Nagasaki');
-assert($('#todayView').textContent.includes('NO CAR'),'Nagasaki should clearly say NO CAR');
-assert($('#todayView').textContent.includes('Airport bus'),'Nagasaki transport profile missing airport bus');
+assert(w.JAPAN_DAY_TRANSPORT?.['2026-09-22']?.label==='NO CAR','Nagasaki transport profile should say NO CAR');
+assert(w.JAPAN_DAY_TRANSPORT?.['2026-09-22']?.detail?.includes('Airport bus'),'Nagasaki transport profile missing airport bus');
 
 const sep23=$$('.daychip').find(x=>x.dataset.i==='1');assert(sep23,'Sep 23 chip missing');sep23.click();await tick();
 assert($('#todayView').textContent.includes('Itoshima'),'Sep 23 must include Itoshima');
