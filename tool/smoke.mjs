@@ -31,7 +31,7 @@ w.L={
   circleMarker:()=>({addTo(){return this},bindTooltip(){return this},remove(){}})
 };
 
-for(const file of ['v2/data.js','canonical.js','tool/expansion.js','final/enrich.js','tool/details.js','tool/map-ui-fix.js','tool/app2.js','tool/transport-ui.js']){
+for(const file of ['v2/data.js','canonical.js','tool/expansion.js','final/enrich.js','tool/details.js','tool/sep24-route.js','tool/map-ui-fix.js','tool/app2.js','tool/transport-ui.js']){
   w.eval(fs.readFileSync(file,'utf8'));
 }
 w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
@@ -63,6 +63,13 @@ $('#liveBack').click();await tick();assert($('#todayView').classList.contains('a
 
 // Deep city inventory assertions.
 const names=date=>w.JAPAN_TRIP.days.find(x=>x.date===date).zones.flatMap(z=>z.stops.map(s=>s[1])).join(' | ');
+const kyushu=names('2026-09-24');for(const x of ['Sagiridai Observatory','Kinrin Lake · east / south shore','Yunotsubo Kaido','Yufuin Floral Village · opening pass','Kokonoe Yume Otsurihashi','Chojabaru · Tadewara Wetlands','Makinoto Pass · first lookout','Senomoto Plateau / Rest House','Kurokawa river lanes','Marurin Bridge','Daikanbo Lookout','Kabutoiwa Observatory','Komezuka roadside viewpoint','Kusasenri · meadow walk','Shirakawa Suigen · daylight only','Tsukimawari Park · Mt. Neko view','Takachiho Airbnb · Mitai'])assert(kyushu.includes(x),`Sep24 missing ${x}`);
+const d24=w.JAPAN_TRIP.days.find(x=>x.date==='2026-09-24');assert(d24?.zones?.length===6,'Sep24 should have six director route zones');
+assert(d24.mission.includes('director day'),'Sep24 mission should identify director day');
+assert((d24.alerts||[]).some(a=>/Route 325|road work/i.test(a.t+' '+a.x)),'Sep24 road-work alert missing');
+assert(w.JAPAN_TRANSFERS?.['2026-09-24|Daikanbo Lookout']?.duration,'Sep24 Daikanbo transfer metadata missing');
+assert(w.JAPAN_ENRICH?.placeInfo?.['Kusasenri · meadow walk']?.practical,'Sep24 deep Kusasenri detail missing');
+
 const osaka=names('2026-09-26');for(const x of ['Himeji Castle Main Keep','Kobe beef · early meal','Osaka Castle Park + exterior','Namba Yasaka Shrine','Dotonbori canal loop','Amerikamura · Triangle Park'])assert(osaka.includes(x),`Sep26 missing ${x}`);
 const kyoto=names('2026-09-28');for(const x of ['Kiyomizu-dera','Kodai-ji grounds / approach','Heian Shrine','Nanzen-ji','Honen-in','Ginkaku-ji','Nijo Castle'])assert(kyoto.includes(x),`Kyoto missing ${x}`);
 const nikko=names('2026-10-01');for(const x of ['Kegon Falls','Lake Chuzenji shore','Toshogu · Yomeimon / Sleeping Cat / core','Taiyuin','Kanmangafuchi Abyss / Bake Jizo'])assert(nikko.includes(x),`Nikko missing ${x}`);
