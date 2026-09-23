@@ -23,6 +23,7 @@ jobs:
       - run: node --check final/enrich.js
       - run: node --check tool/expansion.js
       - run: node --check tool/details.js
+      - run: node --check tool/sep24-route.js
       - run: node --check tool/map-ui-fix.js
       - run: node --check tool/app2.js
       - run: node --check tool/transport-ui.js
